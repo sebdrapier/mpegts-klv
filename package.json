@@ -1,0 +1,71 @@
+{
+  "name": "mpegts-klv",
+  "version": "0.1.0",
+  "description": "Zero-dependency KLV metadata extractor for MPEG-TS files and live streams (MISB ST 0601, STANAG 4609), with Web Worker support.",
+  "keywords": [
+    "mpeg-ts",
+    "mpegts",
+    "klv",
+    "misb",
+    "st0601",
+    "stanag-4609",
+    "demuxer",
+    "drone",
+    "uas",
+    "metadata",
+    "worker"
+  ],
+  "homepage": "https://github.com/sebdrapier/mpegts-klv#readme",
+  "bugs": "https://github.com/sebdrapier/mpegts-klv/issues",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sebdrapier/mpegts-klv.git"
+  },
+  "license": "MIT",
+  "author": "Sébastien Drapier",
+  "type": "module",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      }
+    },
+    "./worker": {
+      "types": "./dist/worker.d.ts",
+      "default": "./dist/worker.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "sideEffects": [
+    "./dist/worker.js"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "build": "tsup && tsc src/index.ts src/worker.ts --ignoreConfig --declaration --emitDeclarationOnly --target es2022 --lib es2022,dom --outDir dist && cp dist/index.d.ts dist/index.d.cts",
+    "test": "bun test",
+    "typecheck": "tsc",
+    "prepublishOnly": "bun run typecheck && bun test && bun run build"
+  },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
+  "devDependencies": {
+    "@types/bun": "^1.4.4",
+    "tsup": "^9.0.0",
+    "typescript": "^7.0.2"
+  }
+}

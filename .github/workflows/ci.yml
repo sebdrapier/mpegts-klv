@@ -1,0 +1,24 @@
+name: CI
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: oven-sh/setup-bun@v2
+      - run: bun install --frozen-lockfile
+      - run: bun run typecheck
+      - run: bun test
+      - run: bun run build
+      - run: bunx publint && bunx @arethetypeswrong/cli --pack . --profile node16 --ignore-rules cjs-resolves-to-esm # the worker is ESM-only on purpose
+      - uses: actions/setup-node@v7
+        with:
+          node-version: lts/*
+      - name: Smoke test on Node (ESM + CJS)
+        run: |
+          node --input-type=module -e 'import {KLVDemuxer} from "mpegts-klv"; if (new KLVDemuxer().flush().length !== 0) process.exit(1)'
+          node -e 'const {splitKLV}=require("mpegts-klv"); if (splitKLV(new Uint8Array()).length !== 0) process.exit(1)'
